@@ -1,20 +1,64 @@
-#define RED_PIN 27
-#define GREEN_PIN 26
-#define BLUE_PIN 25
+#define RED_PIN 19
+#define GREEN_PIN 18
+#define BLUE_PIN 5
 
-#define BUZZER_PIN 23
-#define BUTTON_PIN 21
+#define BUZZER_PIN 21
+#define BUTTON_PIN 4
 
 enum Estado {
   DESLIGADO,
   ERRO,
   INICIALIZANDO,
+  VERIFICANDO,
   READY,
   DRIVING
 };
 
 Estado estadoAtual = INICIALIZANDO;
-bool Erro;
+
+void acionaMotores() {
+  Serial.println("ACIONAMENTO DOS MOTORES");
+  //Motor A:
+  const int ENA=13;
+  const int IN1=12;
+  const int IN2=14;
+
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  //motor B:
+  const int ENB = 25;
+  const int IN3 = 27;
+  const int IN4 = 26;
+
+  pinMode(ENB, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  //Acionamento:
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  // liga motor
+  digitalWrite(ENA, HIGH);
+  digitalWrite(ENB, HIGH);
+
+  // motor ligado por 5 segundos
+  delay(5000);  //Substituir isso por uma condicional que verificará caso a aquisição tenha recebido um comando de stop!
+
+  // while (comando != "o") comando é char, usar só uma letra(stOp)
+  //{digitalWrite(ENB, HIGH);}
+  //digitalWrite(ENB, LOW); digitalWrite(ENA, LOW);
+  //Obs: caso seja feito uma função que ative o motor remotamente, a lógica disso é a mesma(comando = 'T', "sTart")
+
+  // desliga motor
+  digitalWrite(ENA, LOW);
+  digitalWrite(ENB, LOW);
+}
 
 void setColor(bool r, bool g, bool b) {
   digitalWrite(RED_PIN, r);
@@ -35,34 +79,32 @@ void setup() {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   // Vermelho
+  estadoAtual = INICIALIZANDO;
   setColor(HIGH, LOW, LOW);
-
+  Serial.println("INICIALIZANDO");
   delay(2000);
 
   // Amarelo
-  estadoAtual = INICIALIZANDO;
+  estadoAtual = VERIFICANDO;
   setColor(HIGH, HIGH, LOW);
-  Erro = true; //condições a serem recebidas
+  Serial.println("VERIFICANDO");
+  delay(2000);
 
-  if (Erro) {
-    while (true) {
+  while (estadoAtual == ERRO) {
+      Serial.println("ERRO");
       setColor(HIGH, LOW, LOW);
       delay(500);
 
       setColor(LOW, LOW, LOW);
       delay(500);
     }
-  }
-  else {
+  delay(2000);
 
-    delay(2000);
+  // Verde
+  estadoAtual = READY;
+  setColor(LOW, HIGH, LOW);
 
-    // Verde
-    estadoAtual = READY;
-    setColor(LOW, HIGH, LOW);
-
-    Serial.println("READY TO DRIVE");
-  }
+  Serial.println("READY TO DRIVE");
 }
 
 void loop() {
@@ -71,7 +113,7 @@ void loop() {
 
     if (digitalRead(BUTTON_PIN) == LOW) {
 
-      Serial.println("RTD BUTTON PRESSED");
+      Serial.println("BOTAO RTD APERTADO");
 
       tone(BUZZER_PIN, 1000);
 
@@ -87,6 +129,8 @@ void loop() {
       setColor(LOW, LOW, HIGH);
 
       delay(500);
+
+      acionaMotores();
     }
   }
 }
