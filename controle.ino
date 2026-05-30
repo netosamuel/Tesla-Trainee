@@ -24,13 +24,15 @@ Estado estadoAtual = INICIALIZANDO;
 void acionaMotores() {
   Serial.println("ACIONAMENTO DOS MOTORES");
 
-  //Acionamento:
+  // Motor A
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
 
-  // liga motor
+  // Motor B (invertido)
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  // Liga os motores
   digitalWrite(ENA, HIGH);
   digitalWrite(ENB, HIGH);
 }
