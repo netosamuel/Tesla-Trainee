@@ -1,7 +1,12 @@
 #define RED_PIN 19
 #define GREEN_PIN 18
 #define BLUE_PIN 5
-
+#define ENB 25
+#define IN3 27
+#define IN4 26
+#define ENA 13
+#define IN1 12
+#define IN2 14
 #define BUZZER_PIN 21
 #define BUTTON_PIN 4
 
@@ -18,26 +23,8 @@ Estado estadoAtual = INICIALIZANDO;
 
 void acionaMotores() {
   Serial.println("ACIONAMENTO DOS MOTORES");
-  //Motor A:
-  const int ENA=13;
-  const int IN1=12;
-  const int IN2=14;
-
-  pinMode(ENA, OUTPUT);
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-
-  //motor B:
-  const int ENB = 25;
-  const int IN3 = 27;
-  const int IN4 = 26;
-
-  pinMode(ENB, OUTPUT);
-  pinMode(IN3, OUTPUT);
-  pinMode(IN4, OUTPUT);
 
   //Acionamento:
-
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
@@ -46,18 +33,6 @@ void acionaMotores() {
   // liga motor
   digitalWrite(ENA, HIGH);
   digitalWrite(ENB, HIGH);
-
-  // motor ligado por 5 segundos
-  delay(5000);  //Substituir isso por uma condicional que verificará caso a aquisição tenha recebido um comando de stop!
-
-  // while (comando != "o") comando é char, usar só uma letra(stOp)
-  //{digitalWrite(ENB, HIGH);}
-  //digitalWrite(ENB, LOW); digitalWrite(ENA, LOW);
-  //Obs: caso seja feito uma função que ative o motor remotamente, a lógica disso é a mesma(comando = 'T', "sTart")
-
-  // desliga motor
-  digitalWrite(ENA, LOW);
-  digitalWrite(ENB, LOW);
 }
 
 void setColor(bool r, bool g, bool b) {
@@ -73,6 +48,15 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
+
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  
+  pinMode(ENB, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  
 
   pinMode(BUZZER_PIN, OUTPUT);
 
@@ -97,7 +81,7 @@ void setup() {
 
       setColor(LOW, LOW, LOW);
       delay(500);
-    }
+  }
   delay(2000);
 
   // Verde
